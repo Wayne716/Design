@@ -5,68 +5,70 @@
  *  这样通过指向具体产品对象的基类对象指针就可以工作
  */
 
-class Apple {
+class Car {
 public:
-    virtual ~Apple() {}
+    virtual ~Car() {}
     // 所有具体的产品必须遵循的同一接口
-    virtual string Commercial() const = 0;
+    virtual string model() const = 0;
 };
 
-class iPad : public Apple {
+class Mustang : public Car {
 public:
     // 具体的产品对接口提供不同的实现方法
-    string Commercial() const override {
-        return "Your next computer is not a computer.";
+    string model() const override {
+        return "Ford Mustang.";
     }
 };
-class iPhone : public Apple {
+class Cayenne: public Car {
 public:
-    string Commercial() const override {
-        return "Just the right amount of everything.";
+    // 具体的产品对接口提供不同的实现方法
+    string model() const override {
+        return "Porsche Cayenne.";
     }
 };
 
-class Ads {
+class Factory {
 public:
-    virtual ~Ads() {}
-    // 创建类的一个对象，包含一些核心的逻辑，但是子类可以直接覆盖。
-    // 返回类型为通用的产品接口
-    virtual Apple* FactoryMethod() const = 0;
+    ~Factory() {}
+    // 工厂方法创建类的一个对象，返回类型为通用的产品接口。
+    // 包含一些核心的逻辑，但是子类可以直接覆盖。
+    virtual Car* Produce() const = 0;
     string create() const {
-        Apple* product = this->FactoryMethod();
-        string commercial = product->Commercial();
-        delete product;
-        return commercial;
+        Car* car = this->Produce();
+        string model = car->model();
+        delete car;
+        return model;
     }
 };
 
-class iPad_Ad : public Ads {
+class Ford : public Factory {
 public:
-    Apple* FactoryMethod() const override {
-        return new iPad;
+    Car* Produce() const override {
+        return new Mustang;
     }
 };
-
-class iPhone_Ad : public Ads {
+class Porsche : public Factory {
 public:
-    Apple* FactoryMethod() const override {
-        return new iPhone;
+    Car* Produce() const override {
+        return new Cayenne;
     }
 };
 
 // 子类通过基类接口传递
-void display(const Ads& ad) {
-    cout << ad.create() << endl;
+void display(Factory* f) {
+    cout << f->create() << endl;
 }
 
 int main()
 {
-    Ads* ad1 = new iPad_Ad;
-    display(*ad1);
+    Factory* ford = new Ford;
+    display(ford);
 
-    Ads* ad2 = new iPhone_Ad;
-    display(*ad2);
+    Factory* porsche = new Porsche;
+    display(porsche);
 
-    delete ad1;
-    delete ad2;
+    delete ford;
+    delete porsche;
+
+    return 0;
 }
