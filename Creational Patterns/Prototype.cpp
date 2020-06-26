@@ -1,3 +1,9 @@
+/*
+ * 原型类声明克隆的接口
+ * 调用对象的克隆接口实现克隆
+ */
+
+
 class Prototype {
 protected:
     string name;
@@ -70,3 +76,10 @@ int main()
     Client(*f);
     return 0;
 }
+
+/*
+
+M1 is advanced.
+M2 is ultimate.
+
+*/
