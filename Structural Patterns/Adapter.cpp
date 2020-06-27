@@ -1,45 +1,69 @@
-class Target {
+/*
+ * 适配器类继承服务类
+ * 封装对象后由客户端调用
+ *
+ * 可以在成员中包含对象的指针
+ * 或是多重继承服务类和客户端类
+ */
+
+
+class RoundPeg {
+private:
+    double radius;
 public:
-    virtual ~Target() {}
-    virtual string Request() const {
-        return "Default.";
+    RoundPeg() {}
+    RoundPeg(double _r) : radius(_r) {}
+
+    // 服务类的接口要设置为虚函数
+    virtual double Radius() const {
+        return radius;
+    }
+    virtual ~RoundPeg() = default;
+};
+
+class SquarePeg {
+private:
+    double edge;
+public:
+    SquarePeg(double _e) : edge(_e) {}
+    double Edge() const {
+        return edge;
     }
 };
 
-class Service {
+class Adapter : public RoundPeg {
+private:
+    SquarePeg* sp;
 public:
-    string OldRequest() const {
-        return ".dellac ecivreS";
+    Adapter(SquarePeg* _sp) : sp(_sp) {}
+
+    double Radius() const override {
+        int r2 = 2 * pow(sp->Edge()/2, 2);
+        return sqrt(r2);
     }
 };
 
-
-class Adapter : public Target, public Service{
-// private:
-    // Service* service;
+class RoundHole {
+private:
+    double radius;
 public:
-    // Adapter(Service* _s) : service(_s) {}
-    Adapter() {}
-    string Request() const override {
-        // string temp = this->service->OldRequest();
-        string temp = OldRequest();
-        reverse(temp.begin(), temp.end());
-        return temp;
+    RoundHole(double _r) : radius(_r) {}
+
+    bool fits(RoundPeg* peg) const {
+        return radius >= peg->Radius();
     }
 };
-
-void Client(const Target* target) {
-    cout << target->Request();
-}
 
 int main()
 {
-    Target* target = new Target;
-    Client(target);
+    SquarePeg* peg = new SquarePeg(10);
+    Adapter* a = new Adapter(peg);
+    RoundHole* hole = new RoundHole(8);
+    if (hole->fits(a)) cout << "YES";
+    else cout << "NO";
 
-    cout << endl;
-
-    Service* service = new Service;
-    Adapter* adapter = new Adapter;
-    Client(adapter);
+    delete peg;
+    delete a;
+    delete hole;
+    return 0;
 }
