@@ -1,73 +1,67 @@
 /*
  * 部件类派生简单类和装饰类
  * 具体装饰类添加部件的额外行为
+ * 以递归的方式添加底层的装饰
  */
 
 
-class Component {
+class Coffee {
 public:
-    virtual ~Component() = default;
+    virtual ~Coffee() = default;
     virtual string display() const = 0;
 };
 
-class Basic : public Component {
+class Espresso : public Coffee {
 public:
     string display() const override {
-        return "Basic";
-    }
-};
-
-class Decorator : public Component {
-protected:
-    Component* component;
-
-public:
-    Decorator(Component* c) : component(c) {}
-    string display() const override {
-        return component->display();
+        return "espresso";
     }
 };
 
 // 装饰类成员包含被封装的成员变量
-class Dec1 : public Decorator {
+class Decorator : public Coffee {
+protected:
+    shared_ptr<Coffee> coffee;
 public:
-    Dec1(Component* c) : Decorator(c) {}
+    Decorator(shared_ptr<Coffee> c) : coffee(c) {}
     string display() const override {
-        return "A(" + component->display() + ")";
+        return coffee->display() + " +";
     }
 };
 
-class Dec2 : public Decorator {
+class Cream : public Decorator {
 public:
-    Dec2(Component* c): Decorator(c) {}
+    Cream(shared_ptr<Coffee> c) : Decorator(c) {}
     string display() const override {
-        return "B(" + Decorator::display() + ")";
+        return Decorator::display() + "cream";
     }
 };
 
-void print(Component* c) {
-    cout << c->display();
+class Sugar : public Decorator {
+public:
+    Sugar(shared_ptr<Coffee> c) : Decorator(c) {}
+    string display() const override {
+        return Decorator::display() + "sugar";
+    }
+};
+
+void print(shared_ptr<Coffee> c) {
+    cout << c->display() << endl;
 }
 
 int main()
 {
-    Component* simple = new Basic;
-    print(simple);
+    shared_ptr<Coffee> esp = make_shared<Espresso>();
+    print(esp);
 
-    cout << endl;
-
-    Component* dec1 = new Dec1(simple);
-    Component* dec2 = new Dec2(dec1);
-    print(dec2);
-
-    delete simple;
-    delete dec1;
-    delete dec2;
+    shared_ptr<Cream> c = make_shared<Cream>(esp);
+    shared_ptr<Sugar> m = make_shared<Sugar>(c);
+    print(m);
 }
 
 /*
 
-Basic
-B(A(Basic))
+espresso
+espresso +cream +sugar
 
-*/
+ */
