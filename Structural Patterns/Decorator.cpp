@@ -55,8 +55,8 @@ int main()
     print(esp);
 
     shared_ptr<Cream> c = make_shared<Cream>(esp);
-    shared_ptr<Sugar> m = make_shared<Sugar>(c);
-    print(m);
+    shared_ptr<Sugar> s = make_shared<Sugar>(c);
+    print(s);
 }
 
 /*
