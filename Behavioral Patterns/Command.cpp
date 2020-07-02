@@ -31,7 +31,6 @@ public:
     }
 };
 
-
 // 声明命令的执行方法
 class Complex : public Command {
 private:
@@ -46,7 +45,6 @@ public:
         r->Task2(b);
     }
 };
-
 
 // 触发者不创建命令，成员包含命令的引用。
 class Sender {
