@@ -1,77 +1,75 @@
+/*
+ * 命令模式可以参数化对象，并且将命令放入队列中计划执行。
+ * 命令类的成员变量包括参数和接收者的引用，构造函数以参数初始化。
+ */
+
+
 class Command {
 public:
     virtual ~Command() = default;
     virtual void Execute() const = 0;
 };
 
-// 通过命令接口不与任何具体命令类相耦合
-class SimpleCommand : public Command {
+class Simple : public Command {
 private:
     string payload;
 public:
-    SimpleCommand(string _p) : payload(_p) {}
-    void Execute () const override {
-        cout << this->payload << endl;
+    explicit Simple(string p) : payload(p) {};
+    void Execute() const override {
+        cout << payload << endl;
     }
 };
 
+// 执行命令的具体方法
 class Receiver {
 public:
-    void Task1(const string &a) {
+    void Task1(const string& a) {
         cout << a << endl;
     }
-    void Task2(const string &a) {
-        cout << a << endl;
+    void Task2(const string& b) {
+        cout << b << endl;
     }
 };
 
-class ComplexCommand : public Command {
+
+// 声明命令的执行方法
+class Complex : public Command {
 private:
-    Receiver* receiver;
+    shared_ptr<Receiver> r;
     string a;
     string b;
 public:
-    ComplexCommand(Receiver* _r, string _a, string _b)
-        : receiver(_r), a(_a), b(_b) {};
+    Complex(shared_ptr<Receiver> _r, string _a, string _b)
+        : r(_r), a(_a), b(_b) {};
     void Execute() const override {
-        receiver->Task1(a);
-        receiver->Task2(b);
+        r->Task1(a);
+        r->Task2(b);
     }
 };
 
-class Invoker {
+
+// 触发者不创建命令，成员包含命令的引用。
+class Sender {
 private:
-    Command* start;
-    Command* end;
+    queue<shared_ptr<Command>> Q;
 public:
-    ~Invoker() {
-        delete start;
-        delete end;
+    void Push(shared_ptr<Command> c) {
+        Q.push(c);
     }
-    void SetStart(Command* _c) {
-        start = _c;
-    }
-    void SetEnd(Command* _c) {
-        end = _c;
-    }
-    void Task() {
-        if (start)
-            start->Execute();
-        if (end)
-            end->Execute();
+    void Run() {
+        while (!Q.empty()) {
+            Q.front()->Execute();
+            Q.pop();
+        }
     }
 };
 
 int main()
 {
-    Invoker* i = new Invoker;
-    i->SetStart(new SimpleCommand("Simple"));
-    Receiver* r = new Receiver;
-    i->SetEnd(new ComplexCommand(r, "1", "2"));
-    i->Task();
-
-    delete i;
-    delete r;
-
-    return 0;
+    // 接收者 -> 命令 -> 发送者
+    shared_ptr<Sender> s = make_shared<Sender>();
+    s->Push(make_shared<Simple>("simple command"));
+    shared_ptr<Receiver> r = make_shared<Receiver>();
+    s->Push(make_shared<Complex>(r, "a", "b"));
+    s->Run();
 }
