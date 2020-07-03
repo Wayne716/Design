@@ -79,3 +79,13 @@ int main()
     Control();
     return 0;
 }
+
+
+/*
+
+a jet plane is landing
+a helicopter is landing
+a jet plane is landing
+a helicopter is landing
+
+*/
