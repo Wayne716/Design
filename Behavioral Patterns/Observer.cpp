@@ -45,7 +45,7 @@ public:
         cout << "Reader " + to_string(ID) + " unsubscribed." << endl;
     }
     void Update(string& h) override {
-        cout << ID << " [News] " << h << endl;
+        cout << "Update " << ID << ": [" << h << ']' << endl;
     }
 private:
     News& following;
@@ -74,3 +74,15 @@ int main()
     Client();
     return 0;
 }
+
+
+/*
+
+Reader 1 just subscribed.
+Reader 2 just subscribed.
+Update 1: [Boris Johnson’s ‘Global Britain’: Inspired Vision or Wishful Thinking?]
+Update 2: [Boris Johnson’s ‘Global Britain’: Inspired Vision or Wishful Thinking?]
+Reader 2 unsubscribed.
+Update 1: [Coronavirus Live Updates: U.S. Cases Are Rising, Even as Death Rates Trend Down]
+ 
+*/
