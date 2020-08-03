@@ -1,13 +1,13 @@
 ![](Prototype.png)
 
-新的模型应该由一个注册表维护，可以由一个工厂类实现，或者是写在产品基类里。
+具体模型应该由一个注册表维护，可以由一个工厂类实现，或者是写在产品基类里。
 
 ```cpp
 From: auto obj = new ConcreteType();
 To: auto obj = factory->RegisteredProtoObjects[ID].clone();
 ```
 
-原型模式需要初始化，注册原型的对象。
+原型模式需要初始化，注册具体原型的对象。
 
 ```cpp
 class Model {
